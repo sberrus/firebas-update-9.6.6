@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*BOOTSTRAP CUSTOMIZATION*/
+
+.card-img-top{
+  height: 8em;
+}
