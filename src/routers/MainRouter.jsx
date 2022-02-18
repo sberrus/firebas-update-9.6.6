@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 //Layouts
 import MainLayout from "../components/layouts/MainLayout";
@@ -11,6 +11,7 @@ import Main from "../components/main/Main";
 //
 import NotFound from "../components/NotFound";
 import AuthLayout from "../components/layouts/AuthLayout";
+import EmailPassword from "../components/auth/email-password/EmailPassword";
 
 const MainRouter = () => {
 	return (
@@ -20,7 +21,7 @@ const MainRouter = () => {
 				<Route index element={<Main />} />
 				<Route path="auth" element={<AuthLayout />}>
 					<Route index element={<Auth />} />
-					<Route path="email-password" element={<>emaiñ</>} />
+					<Route path="email-password" element={<EmailPassword />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Route>
