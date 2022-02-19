@@ -1,74 +1,63 @@
-import React, { useState } from "react";
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import ForgotPasswordForm from "./ForgotPasswordForm";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+import UserLogged from "./UserLogged";
 
 const EmailPassword = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	//TODO: 1. Vista y lógica de Login [DONE]
+	const [isLogin, setIsLogin] = useState(true);
+	const [isRegister, setIsRegister] = useState(false);
+	const [isPasswordLost, setIsPasswordLost] = useState(false);
+	const [userLogged, setUserLogged] = useState(false);
 
 	const auth = getAuth();
 
-	const handleEmailChange = (e) => {
-		setEmail(e.target.value);
+	useEffect(() => {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setUserLogged(user);
+				return;
+			}
+			console.log("No hay usuario");
+		});
+
+		return () => {};
+	}, []);
+
+	//todo: Usar estos manejadores para manejar las vistas de los formularios
+	const initRegisterForm = () => {
+		setIsRegister(true);
+		setIsLogin(false);
+		setIsPasswordLost(false);
 	};
-	const handlePasswordChange = (e) => {
-		setPassword(e.target.value);
+	const initLoginForm = () => {
+		setIsLogin(true);
+		setIsRegister(false);
+		setIsPasswordLost(false);
+	};
+	const initForgotPassword = () => {
+		setIsPasswordLost(true);
+		setIsRegister(false);
+		setIsLogin(false);
 	};
 
-	const login = (e) => {
-		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredentials) => {
-				console.log(userCredentials);
-			})
-			.catch((error) => {
-				console.log(error.code);
-				console.log(error.message);
-			});
-	};
+	//TODO: 3. Vista y lógica de Registro
+	//TODO: 4. Vista y lógica de Contraseña Perdida
+	//TODO: 2. Vista y lógica de Logout
 
-	return (
+	return userLogged ? (
+		<UserLogged userLogged={userLogged} />
+	) : (
 		<div className="row">
-			<div className="col-4 m-auto">
-				<form onSubmit={login}>
-					<div className="mb-3">
-						<label htmlFor="exampleInputEmail1" className="form-label">
-							Email address
-						</label>
-						<input
-							type="email"
-							className="form-control"
-							id="exampleInputEmail1"
-							aria-describedby="emailHelp"
-							value={email}
-							onChange={handleEmailChange}
-						/>
-						<div id="emailHelp" className="form-text">
-							We'll never share your email with anyone else.
-						</div>
-					</div>
-					<div className="mb-3">
-						<label htmlFor="exampleInputPassword1" className="form-label">
-							Password
-						</label>
-						<input
-							type="password"
-							className="form-control"
-							id="exampleInputPassword1"
-							value={password}
-							onChange={handlePasswordChange}
-						/>
-					</div>
-					<div className="mb-3 form-check">
-						<input type="checkbox" className="form-check-input" id="exampleCheck1" />
-						<label className="form-check-label" htmlFor="exampleCheck1">
-							Check me out
-						</label>
-					</div>
-					<button type="submit" className="btn btn-primary">
-						Submit
-					</button>
-				</form>
-			</div>
+			{isLogin && (
+				<>
+					<LoginForm initRegisterForm={initRegisterForm} initForgotPassword={initForgotPassword} />
+				</>
+			)}
+			{isRegister && <RegisterForm initLoginForm={initLoginForm} />}
+			{isPasswordLost && <ForgotPasswordForm />}
 		</div>
 	);
 };
